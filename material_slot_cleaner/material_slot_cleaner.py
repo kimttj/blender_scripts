@@ -11,8 +11,9 @@ def sort_mslot(obj, ary_mslot, jj):
                 空スロットは並び変え優先度低とする。
 
         引数：
-                ary: list  : 並び変えリスト
-                jj  : int  : 配列インデックス
+                obj: 処理対象オブジェクト
+                ary_mslot: 並び変えマテリアルスロットリスト
+                jj  : 配列インデックス
         戻り値： なし
     """
 
