@@ -1,10 +1,12 @@
 #　material_slot_cleaner
-# マテリアルスロットをソートし、空スロットを削除する。
+# 機能概要；
+# 選択中のオブジェクトのマテリアルスロットのマテリアル順序を
+# 名称順にソートし、空スロットを削除する。
 # 
 
 import bpy
 
-def sort_mslot(obj, ary_mslot, jj):
+def sort_mat_slot(obj, ary_mat_slot, jj):
     """
         機能概要：マテリアルスロットソート処理
                 マテリアル名称の文字列比較により昇順に配列を入れ替える。
@@ -18,14 +20,14 @@ def sort_mslot(obj, ary_mslot, jj):
     """
 
     # マテリアルスロットが空だとNoneを返すのでその処理
-    ary_none = (ary_mslot[jj].material is None, ary_mslot[jj+1].material is None)
+    ary_none = (ary_mat_slot[jj].material is None, ary_mat_slot[jj+1].material is None)
     if ary_none in [(True, True), (False, True)]:
         swap = False
     elif ary_none in [(True, False)]:
         swap = True
     else:
         # マテリアル名に応じて入れ替える
-        if ary_mslot[jj].material.name > ary_mslot[jj+1].material.name:
+        if ary_mat_slot[jj].material.name > ary_mat_slot[jj+1].material.name:
             swap = True
         else:
             swap = False
@@ -37,16 +39,22 @@ def sort_mslot(obj, ary_mslot, jj):
 def execute():
     """ メイン処理 """
 
-    obj = bpy.context.object
-    ary_mslot = obj.material_slots
+    # 選択中の複数オブジェクトを処理対象とする
+    obj_list = bpy.context.selected_objects
 
-    # マテリアルスロットソート
-    for ii in range(len(ary_mslot)):
-        for jj in range(len(ary_mslot)-2, ii-1, -1):
-            sort_mslot(obj, ary_mslot, jj)
+    # マテリアルスロットソート処理
+    for obj in obj_list:
+        print("処理開始：{}", obj.name)
+        bpy.context.view_layer.objects.active = obj        
+        ary_mat_slot = obj.material_slots
+
+        # マテリアルスロットソート
+        for ii in range(len(ary_mat_slot)):
+            for jj in range(len(ary_mat_slot)-2, ii-1, -1):
+                sort_mat_slot(obj, ary_mat_slot, jj)
 
     # マテリアルの空スロット削除
-    for obj in bpy.data.objects:
+    for obj in obj_list:
         bpy.context.view_layer.objects.active = obj
         if not len(obj.material_slots) == 0:
             for slot in obj.material_slots:
